@@ -15,6 +15,7 @@ class reportData():
         else:
             self._reportFileName = reportFileName
 
+   
     # 生成数据块
     def _get_table_label(self, id, day, newdata, olddata):
         import pandas as pd
@@ -31,16 +32,22 @@ class reportData():
             olddata["followNum"] = olddata["followNum"].astype('string')
         else:
             olddata["followNum"] = "0"
-        for index, row in newdata.iterrows():
-            if row.houseLink in olddata.houseLink.tolist():
-                if row.houseTotlePrice < olddata[olddata.houseLink == row.houseLink].houseTotlePrice.iloc[0]:
-                    down = down.append(row.append(pd.Series({'old_houseTotlePrice': olddata[olddata.houseLink == row.houseLink].houseTotlePrice.iloc[0]})), ignore_index=True)
-                elif row.houseTotlePrice > olddata[olddata.houseLink == row.houseLink].houseTotlePrice.iloc[0]:
-                    up = up.append(row.append(pd.Series({'old_houseTotlePrice': olddata[olddata.houseLink == row.houseLink].houseTotlePrice.iloc[0]})), ignore_index=True)
+        for index , row in newdata.iterrows():
+            isOld = row.houseLink in olddata.houseLink.tolist()
+            if isOld:
+                isChanged = olddata.houseLink == row.houseLink
+                oldTotalPrice = '0'
+                ilocNums = olddata[isChanged].houseTotlePrice.shape[0]
+                if(ilocNums>0):
+                    oldTotalPrice = olddata[isChanged].houseTotlePrice.iloc[0]
+                if row.houseTotlePrice < oldTotalPrice:
+                    down = down._append(row._append(pd.Series({'old_houseTotlePrice': oldTotalPrice})), ignore_index=True)
+                elif row.houseTotlePrice >oldTotalPrice:
+                    up = up._append(row._append(pd.Series({'old_houseTotlePrice': oldTotalPrice})), ignore_index=True)
                 else:
-                    other = other.append(row.append(pd.Series({'old_houseTotlePrice': olddata[olddata.houseLink == row.houseLink].houseTotlePrice.iloc[0]})), ignore_index=True)
+                    other = other._append(row._append(pd.Series({'old_houseTotlePrice': oldTotalPrice})), ignore_index=True)
             else:
-                new = new.append(row.append(pd.Series({'old_houseTotlePrice': '-'})), ignore_index=True)
+                new = new._append(row._append(pd.Series({'old_houseTotlePrice': '-'})), ignore_index=True)
         new['sign'] = '新增'
         down['sign'] = '下降'
         up['sign'] = '上升'
@@ -58,7 +65,6 @@ class reportData():
                 <th>房屋单价</th>
                 <th>关注人数</th>
                 <th>小区名</th>
-                <th>房屋链接</th>
                 <th>来源网站</th>
             </tr>
             </thead>
@@ -79,7 +85,6 @@ class reportData():
                 <th>房屋单价</th>
                 <th>关注人数</th>
                 <th>小区名</th>
-                <th>房屋链接</th>
                 <th>来源网站</th>
             </tr>
             </tfoot>
@@ -92,16 +97,15 @@ class reportData():
             result += '''
             <tr>
                 <td>%s</td>
-                <td>%s</td>
-                <td>%s</td>
-                <td>%s</td>
-                <td>%s</td>
-                <td>%s</td>
-                <td>%s</td>
-                <td>%s</td>
                 <td><a href="%s" target="_blank">%s</a></td>
                 <td>%s</td>
-            </tr>'''% (row.sign, row.houseName, row.houseNote, row.houseTotlePrice, row.old_houseTotlePrice, row.houseUnitPrice, row.followNum, row.villageName, row.houseLink if row.houseLink[:4]=="http" else "http://" + row.houseLink, row.houseLink, row.webName)
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+            </tr>'''% (row.sign, row.houseLink, row.houseName, row.houseNote, row.houseTotlePrice, row.old_houseTotlePrice, row.houseUnitPrice, row.followNum, row.villageName, row.webName)
         return result
 
     # 生成报告文件

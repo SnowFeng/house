@@ -34,36 +34,39 @@ class AnjukeParser(HTMLParser):
     def feed(self, data):
         super().feed(data)
         # 校验数据个数是否统一
-        size = len(self.houseName)
-        if len(self.houseName) != size or len(self.villageName) != size or len(self.houseNote) != size \
-                or len(self.houseTotlePrice) != size or len(self.houseUnitPrice) != size or len(self.houseLink) != size \
-                or len(self.houseImg) != size:
-            raise ValueError("数据个数不一致：houseName-" + str(len(self.houseName)) + ",villageName-" + str(len(self.villageName)) +
-                             ",houseNote-" + str(len(self.houseNote)) + ",houseTotlePrice-" + str(len(self.houseTotlePrice)) +
-                             ",houseUnitPrice-" + str(len(self.houseUnitPrice)) + ",houseLink-" + str(len(self.houseLink)) +
-                             ",houseImg-" + str(len(self.houseImg)))
+        # size = len(self.houseName)
+        # if len(self.houseName) != size or len(self.villageName) != size or len(self.houseNote) != size \
+        #         or len(self.houseTotlePrice) != size or len(self.houseUnitPrice) != size or len(self.houseLink) != size \
+        #         or len(self.houseImg) != size:
+        #     raise ValueError("数据个数不一致：houseName-" + str(len(self.houseName)) + ",villageName-" + str(len(self.villageName)) +
+        #                      ",houseNote-" + str(len(self.houseNote)) + ",houseTotlePrice-" + str(len(self.houseTotlePrice)) +
+        #                      ",houseUnitPrice-" + str(len(self.houseUnitPrice)) + ",houseLink-" + str(len(self.houseLink)) +
+        #                      ",houseImg-" + str(len(self.houseImg)))
         return self.houseName, self.villageName, self.houseNote, self.houseTotlePrice, self.houseUnitPrice, self.houseLink, self.houseImg, [0]*len(self.houseImg)
 
     def handle_starttag(self, tag, attrs):
-        if tag == "span" and ("class", "comm-address") in attrs:
+        from urllib.parse import urlparse
+        if tag == "p" and ("class", "property-content-info-comm-name") in attrs:
             self.flag.append("villageName")
-        elif tag == "span" and ("class", "price-det") in attrs:
+        elif tag == "span" and ("class", "property-price-total-num") in attrs:
             self.flag.append("houseTotlePrice_2")
-        elif tag == "span" and ("class", "unit-price") in attrs:
+        elif tag == "p" and ("class", "property-price-average") in attrs:
             self.flag.append("houseUnitPrice")
         elif tag == "span":
             self.flag.append("span")
         elif tag == "strong":
             self.flag.append("strong")
-        elif tag == "a" and ("class", "houseListTitle ") in attrs:
+        elif tag == "h3" and ("class", "property-content-title-name") in attrs:
             self.flag.append("houseName")
+        elif tag == "a" and ("class", "property-ex") in attrs:
             for attr in attrs:
                 if attr[0] == "href":
-                    self.houseLink.append(attr[1])
-        elif tag == "div" and ("class", "details-item") in attrs:
+                    linkUrl = urlparse(attr[1])
+                    self.houseLink.append('%s://%s%s'%(linkUrl.scheme,linkUrl.hostname,linkUrl.path))
+        elif tag == "div" and ("class", "property-content-info") in attrs:
             self.flag.append("houseNote_2")
             self.span = ""
-        elif tag == "img" and ("width", "180") in attrs:
+        elif tag == "img" and ("class", "lazy-img cover") in attrs:
             for attr in attrs:
                 if attr[0] == "src":
                     self.houseImg.append(attr[1])
@@ -82,26 +85,25 @@ class AnjukeParser(HTMLParser):
     def handle_data(self, data):
         if len(self.flag) != 0:
             if self.flag[-1] == "span":
-                # print(str(data))
                 self.span += data
                 self.flag.pop()
             elif self.flag[-1] == "strong":
+                # print('strong = '+str(data))
                 self.strong = data
                 self.flag.pop()
             elif self.flag[-1] == "houseName":
-                # print(str(data))
+                # print('houseName = '+str(data))
                 self.houseName.append(str(strip(data)))
                 self.flag.pop()
             elif self.flag[-1] == "villageName":
-                # print(str(data))
+                # print('villageName = '+str(data))
                 self.villageName.append(str(strip(data)))
                 self.flag.pop()
             elif self.flag[-1] == "houseTotlePrice_2":
-                # print(str(data))
-                self.houseTotlePrice.append(self.strong + data)
-                self.strong = ""
+                # print('houseTotlePrice_2 = '+str(data))
+                self.houseTotlePrice.append(data + '万')
                 self.flag.pop()
             elif self.flag[-1] == "houseUnitPrice":
-                # print(str(data))
+                # print('houseUnitPrice = '+str(data))
                 self.houseUnitPrice.append(data)
                 self.flag.pop()

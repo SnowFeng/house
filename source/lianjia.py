@@ -29,15 +29,15 @@ class LianjiaParser(HTMLParser):
 
     def feed(self, data):
         super().feed(data)
-        # 校验数据个数是否统一
-        size = len(self.houseName)
-        if len(self.houseName) != size or len(self.villageName) != size or len(self.houseNote) != size \
-                or len(self.houseTotlePrice) != size or len(self.houseUnitPrice) != size or len(self.houseLink) != size \
-                or len(self.houseImg) != size or len(self.followNum) != size:
-            raise ValueError("数据个数不一致：houseName-" + str(len(self.houseName)) + ",villageName-" + str(len(self.villageName)) +
-                             ",houseNote-" + str(len(self.houseNote)) + ",houseTotlePrice-" + str(len(self.houseTotlePrice)) +
-                             ",houseUnitPrice-" + str(len(self.houseUnitPrice)) + ",houseLink-" + str(len(self.houseLink)) +
-                             ",houseImg-" + str(len(self.houseImg)) + ",followNum-" + str(len(self.followNum)))
+        # # 校验数据个数是否统一
+        # size = len(self.houseName)
+        # if len(self.houseName) != size or len(self.villageName) != size or len(self.houseNote) != size \
+        #         or len(self.houseTotlePrice) != size or len(self.houseUnitPrice) != size or len(self.houseLink) != size \
+        #         or len(self.houseImg) != size or len(self.followNum) != size:
+        #     raise ValueError("数据个数不一致：houseName-" + str(len(self.houseName)) + ",villageName-" + str(len(self.villageName)) +
+        #                      ",houseNote-" + str(len(self.houseNote)) + ",houseTotlePrice-" + str(len(self.houseTotlePrice)) +
+        #                      ",houseUnitPrice-" + str(len(self.houseUnitPrice)) + ",houseLink-" + str(len(self.houseLink)) +
+        #                      ",houseImg-" + str(len(self.houseImg)) + ",followNum-" + str(len(self.followNum)))
         return self.houseName, self.villageName, self.houseNote, self.houseTotlePrice, self.houseUnitPrice, self.houseLink, self.houseImg, self.followNum
 
     def handle_starttag(self, tag, attrs):

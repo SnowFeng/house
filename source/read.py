@@ -22,7 +22,7 @@ class readData():
     # 读取 leancloud 表名列表
     def _read_leancloud_tablenames(self):
         import requests
-        url = 'https://tpra4qll.api.lncld.net/1.1/schemas'
+        url = 'https://gomw5ftj.lc-cn-n1-shared.com/1.1/schemas'
         head = {
             "X-LC-Id": self._config['leancloud']['appid'],
             "X-LC-Key": self._config['leancloud']['masterkey'] + ',master'
@@ -36,7 +36,7 @@ class readData():
         import requests
         import pandas as pd
 
-        url = 'https://tpra4qll.api.lncld.net/1.1/classes/'
+        url = 'https://gomw5ftj.lc-cn-n1-shared.com/1.1/classes/'
         limit = 200
         skip = 0
         head = {
@@ -48,13 +48,18 @@ class readData():
         data = pd.DataFrame()
         while(sign):
             response = requests.get(url + str(tablename) + '?limit=' + str(limit) + '&skip=' + str(skip), headers=head)
-            data = data.append(pd.DataFrame(response.json()["results"]))
+            data = pd.concat([data,pd.DataFrame(response.json()["results"])],)
             if len(response.json()["results"])==0:
                 sign = 0
             skip = skip + limit
         data = data.drop_duplicates(['houseLink'])
+        # print('读取'+tablename+'表数据开始\n')
+        # for row in data.iterrows():
+        #     print(row)
+        # # print('houseName='+entity['houseName']+'\n'+'houseNote='+entity['houseNote']+'\n'+'houseTotlePrice='+entity['houseTotlePrice']+'\n'+'houseUnitPrice='+entity['houseUnitPrice']+'\n'+'villageName='+str(entity['villageName'])+'\n')
+        # print('读取'+tablename+'表数据结束\n')
         return data
-
+    
     # 读取 mysql 表名列表
     def _read_mysql_tablenames(self):
         import mysql.connector

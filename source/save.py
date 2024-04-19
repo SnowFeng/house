@@ -8,6 +8,7 @@ from .anjuke import AnjukeParser
 from .ganji import GanjiParser
 from .lianjia import LianjiaParser
 from .tongcheng import TongchengParser
+from .read import readData as read
 
 
 class saveData():
@@ -22,15 +23,30 @@ class saveData():
     # 清除leancloud数据
     def _delete_leancloud(self):
         import leancloud
+        #获取配置
+        config = configparser.ConfigParser()
+        config.read("config.ini")
+
         # 初始化leancloud
         leancloud.init(self._config['leancloud']['appid'], self._config['leancloud']['appkey'])
         # 开启日志
         # logging.basicConfig(level=logging.DEBUG)
         timestring = time.strftime('%Y%m%d%H', time.localtime(time.time()))
-        tablename = 'T' + timestring + 'TheFutureOfHome'
-        TestObject = leancloud.Object.extend(tablename)
-        test_object = TestObject()
-        test_object.destroy()
+        tablename = 'T' + timestring + 'ErShouHouse'
+        # 获得所有表名
+        tablenames = read._read_leancloud_tablenames(self)
+
+        if(tablename not in tablenames):
+            return
+        query = leancloud.Query(tablename)
+        # 最多获取 1000 条结果
+        query.limit(1000)
+        list = query.find()
+        print('正在删除老数据。。。')
+        for obj in list:
+            obj.destroy()    
+        
+            
 
     # 保存到leancloud
     def _save_leancloud(self, webName, houseName, villageName, houseNote, houseTotlePrice, houseUnitPrice, houseLink,
@@ -41,8 +57,8 @@ class saveData():
         # 开启日志
         # logging.basicConfig(level=logging.DEBUG)
         timestring = time.strftime('%Y%m%d%H', time.localtime(time.time()))
-        # timestring = "2021090510"
-        tablename = 'T' + timestring + 'TheFutureOfHome'
+        # timestring = '2024041516'
+        tablename = 'T' + timestring + 'ErShouHouse'
         TestObject = leancloud.Object.extend(tablename)
         for i in range(0, len(houseName)):
             test_object = TestObject()
@@ -80,7 +96,7 @@ class saveData():
         conn = pymysql.connect(host=host, port=port, user=user, passwd=passwd, db=db, charset='utf8')
         cursor = conn.cursor()
         timestring = time.strftime('%Y%m%d%H', time.localtime(time.time()))
-        tablename = 'T' + timestring + 'TheFutureOfHome'
+        tablename = 'T' + timestring + 'ErShouHouse'
         drop_sql = """drop table IF EXISTS %s""" % (tablename)
         drop_rows = cursor.execute(drop_sql)
         print('delete ' + str(drop_rows) + ' rows.')
@@ -106,7 +122,7 @@ class saveData():
         cursor = conn.cursor()
 
         timestring = time.strftime('%Y%m%d%H', time.localtime(time.time()))
-        tablename = 'T' + timestring + 'TheFutureOfHome'
+        tablename = 'T' + timestring + 'ErShouHouse'
         create_table_sql = """CREATE TABLE IF NOT EXISTS %s (
             Id int auto_increment,
             webName varchar(255),
