@@ -96,6 +96,15 @@ html_temp = '''
             height: auto;
             margin: -15px 0 0 0;
         }
+
+        .link-with-image {
+            position: relative;
+        }
+        
+        .link-image {
+            width: 280px;
+            height: 210px;
+        }
     </style>
 </head>
 <body>

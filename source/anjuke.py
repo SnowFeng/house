@@ -68,7 +68,7 @@ class AnjukeParser(HTMLParser):
             self.span = ""
         elif tag == "img" and ("class", "lazy-img cover") in attrs:
             for attr in attrs:
-                if attr[0] == "src":
+                if attr[0] == "data-src":
                     self.houseImg.append(attr[1])
 
     def handle_endtag(self, tag):

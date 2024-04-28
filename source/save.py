@@ -197,6 +197,7 @@ class saveData():
         anjuke = AnjukeParser()
         houseName, villageName, houseNote, houseTotlePrice, houseUnitPrice, houseLink, houseImg, followNum = anjuke.feed(html)
         self._saveData('安居客', houseName, villageName, houseNote, houseTotlePrice, houseUnitPrice, houseLink, houseImg, followNum)
+    
 
     # 赶集
     def ganji_save(self, html):

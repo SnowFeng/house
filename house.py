@@ -2,7 +2,7 @@
 # python3.0
 
 from source.save import saveData
-from source.common import getHtml
+from source.common import getHtml,getRenderHtml
 from source.report import reportData
 import configparser
 import webbrowser
@@ -49,10 +49,10 @@ if __name__ == '__main__':
     #     save.tongcheng_save(tongcheng_html)
 
     # 安居客 （例：北京 200-600万 60-100平 按最新排序） 根据自己需求添加链接
-    anjuke1 = getHtml('''https://chongqing.anjuke.com/sale/bishanqu-q-bishanlaochengqu/d47-z1/?prices=30_60&areas=100_140''')
-    anjuke2 = getHtml('''https://chongqing.anjuke.com/sale/bishanqu-q-bishanlaochengqu/d47-p2-z1/?prices=30_60&areas=100_140''')
-    anjuke3 = getHtml('''https://chongqing.anjuke.com/sale/bishanqu-q-bishanlaochengqu/d47-p3-z1/?prices=30_60&areas=100_140''')
-    anjuke_htmls = [anjuke1, anjuke2,anjuke3]
+    anjuke1 = getRenderHtml('''https://chongqing.anjuke.com/sale/bishanqu-q-bishanlaochengqu/d47-z1/?prices=30_60&areas=100_140''')
+    anjuke2 = getRenderHtml('''https://chongqing.anjuke.com/sale/bishanqu-q-bishanlaochengqu/d47-p2-z1/?prices=30_60&areas=100_140''')
+    anjuke3 = getRenderHtml('''https://chongqing.anjuke.com/sale/bishanqu-q-bishanlaochengqu/d47-p3-z1/?prices=30_60&areas=100_140''')
+    anjuke_htmls = [anjuke1,anjuke2,anjuke3]
     for anjuke_html in anjuke_htmls:
         save.anjuke_save(anjuke_html)
 

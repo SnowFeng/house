@@ -97,7 +97,7 @@ class reportData():
             result += '''
             <tr>
                 <td>%s</td>
-                <td><a href="%s" target="_blank">%s</a></td>
+                <td><a href="%s" target="_blank" class="link-with-image"><img src="%s" class="link-image" alt="Hover image">%s</a></td>
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
@@ -105,7 +105,7 @@ class reportData():
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
-            </tr>'''% (row.sign, row.houseLink, row.houseName, row.houseNote, row.houseTotlePrice, row.old_houseTotlePrice, row.houseUnitPrice, row.followNum, row.villageName, row.webName)
+            </tr>'''% (row.sign, row.houseLink, row.houseImg, row.houseName, row.houseNote, row.houseTotlePrice, row.old_houseTotlePrice, row.houseUnitPrice, row.followNum, row.villageName, row.webName)
         return result
 
     # 生成报告文件
